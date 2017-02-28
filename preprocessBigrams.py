@@ -7,7 +7,7 @@
 
 
 import nltk, re, pprint
-from nltk import 
+from nltk import word_tokenize
 from nltk.collocations import *
 from nltk.corpus import stopwords
 from os import listdir
