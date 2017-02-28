@@ -4,8 +4,6 @@
 
 # The modifications parses the vocabulary as bigrams instead of as single-word tokens
 # Tweak your word count threshhold and set your own filename (train)
-
-
 import nltk, re, pprint
 from nltk import word_tokenize
 from nltk.collocations import *
@@ -78,14 +76,21 @@ def tokenize_corpus(path, train=True):
     tokens_1 = [w for w in tokens_1 if w not in stopWords] # remove stopwords
     tokens_1 = [wnl.lemmatize(t) for t in tokens_1]
     tokens_1 = [porter.stem(t) for t in tokens_1]   
-    tokens = BigramCollocationFinder.from_words(tokens_1)
+    #finder = BigramCollocationFinder.from_words(tokens_1)
+    bigrams = nltk.bigrams(tokens_1)
+    tokens = []
+    for (a, b) in bigrams:
+      tokens.append(a + " " + b)
+      
 
     if train == True:
      for t in tokens: 
-         try:
-             words[t] = words[t]+1
-         except:
-             words[t] = 1
+        try:
+            words[t] = words[t]+1
+            print t
+        except:
+            words[t] = 1
+            print t
     docs.append(tokens)
 
   if train == True:
@@ -94,7 +99,7 @@ def tokenize_corpus(path, train=True):
      return(docs, classes, samples)
 
 
-def wordcount_filter(words, num=5):
+def wordcount_filter(words, num=2):
    keepset = []
    for k in words.keys():
        if(words[k] > num):
@@ -145,13 +150,13 @@ def main(argv):
     elif opt in ("-v", "--vocabfile"):
       vocabf = arg
 
-  traintxt = path+"/train.txt"
+  traintxt = path+"/test.txt"
   print 'Path:', path
   print 'Training data:', traintxt
 
   # Tokenize training data (if training vocab doesn't already exist):
   if (not vocabf):
-    word_count_threshold = 5
+    word_count_threshold = 2
     (docs, classes, samples, words) = tokenize_corpus(traintxt, train=True)
     vocab = wordcount_filter(words, num=word_count_threshold)
     # Write new vocab file
